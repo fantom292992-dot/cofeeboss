@@ -1,0 +1,1142 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Coffee Boss — Мережа кав'ярень Чернігів</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,700;0,9..40,900;1,9..40,400;1,9..40,700&family=Playfair+Display:ital,wght@1,700;1,900&display=swap" rel="stylesheet">
+<style>
+/* ══════════════════════════════════════
+   BRAND TOKENS — змінюй для нової кафейні
+   ══════════════════════════════════════ */
+:root {
+  --bg:       #1b120d;
+  --hero-bg:  #5c2e18;
+  --cream:    #f0e4d2;
+  --muted:    #b8a693;
+  --accent:   #c9521f;
+  --green:    #16704f;
+  --ink:      #1b120d;
+  --line:     rgba(240,228,210,.14);
+  --r:        cubic-bezier(.16,1,.3,1);
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: "DM Sans", system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--cream);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+a { color: inherit; text-decoration: none; }
+img { display: block; }
+
+/* ══ REVEAL ══ */
+body.js [data-r] {
+  opacity: 0;
+  transform: translateY(56px);
+  filter: blur(6px);
+  transition: opacity .9s var(--r), transform .9s var(--r), filter .9s var(--r);
+}
+body.js [data-r=left]  { transform: translateX(-56px); }
+body.js [data-r=right] { transform: translateX(56px); }
+body.js [data-r=scale] { transform: scale(.94); }
+body.js [data-r].on { opacity:1; transform:none; filter:blur(0); }
+
+/* ══ NAV ══ */
+#nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 50;
+  height: 72px;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 40px;
+  transition: background .4s, backdrop-filter .4s;
+}
+#nav.bg {
+  background: rgba(27,18,13,.85);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border-bottom: 1px solid var(--line);
+}
+.nav-logo {
+  font-size: 18px; font-weight: 900; letter-spacing: -.04em;
+  display: flex; align-items: center; gap: 6px;
+  flex-shrink: 0;
+  position: relative; z-index: 2;
+}
+.nav-logo em { color: var(--accent); font-style: normal; }
+.nav-logo i {
+  display: inline-block; width: 7px; height: 7px; border-radius: 50%;
+  background: var(--accent); margin-bottom: 1px;
+}
+.nav-links {
+  display: flex; gap: 4px;
+  flex: 1; justify-content: center;
+  min-width: 0;
+  position: relative; z-index: 1;
+}
+.nav-links a {
+  padding: 9px 14px; border-radius: 20px;
+  font-size: 12px; font-weight: 500;
+  color: rgba(240,228,210,.75);
+  transition: background .2s, color .2s;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  overflow: hidden;
+}
+.nav-links a:hover,
+.nav-links a:focus-visible,
+.nav-links a.is-on { background: rgba(240,228,210,.09); color: var(--cream); }
+.nav-cta {
+  font-size: 11px; font-weight: 700;
+  padding: 10px 20px;
+  border: 1px solid var(--line);
+  border-radius: 24px;
+  transition: background .25s, color .25s, transform .2s;
+  flex-shrink: 0;
+  position: relative; z-index: 2;
+  overflow: hidden;
+  display: inline-flex;
+  align-items: center;
+}
+.nav-cta:hover,
+.nav-cta:focus-visible,
+.nav-cta.is-on { background: var(--cream); color: var(--ink); transform: translateY(-1px); }
+.roll {
+  display: block;
+  height: 1.2em;
+  overflow: hidden;
+  position: relative;
+  line-height: 1.2em;
+}
+.roll > span {
+  display: block;
+  height: 1.2em;
+  line-height: 1.2em;
+  transition: transform .5s cubic-bezier(.16,1,.3,1);
+}
+.roll > span:last-child {
+  position: absolute;
+  left: 0; top: 0;
+  transform: translateY(110%);
+}
+.nav-links a:hover .roll > span:first-child,
+.nav-links a:focus-visible .roll > span:first-child,
+.nav-links a.is-on .roll > span:first-child,
+.nav-cta:hover .roll > span:first-child,
+.nav-cta:focus-visible .roll > span:first-child,
+.nav-cta.is-on .roll > span:first-child {
+  transform: translateY(-110%);
+}
+.nav-links a:hover .roll > span:last-child,
+.nav-links a:focus-visible .roll > span:last-child,
+.nav-links a.is-on .roll > span:last-child,
+.nav-cta:hover .roll > span:last-child,
+.nav-cta:focus-visible .roll > span:last-child,
+.nav-cta.is-on .roll > span:last-child {
+  transform: translateY(0);
+}
+.nav-burger { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 6px; }
+.nav-burger span { display: block; width: 22px; height: 1.5px; background: var(--cream); transition: .3s; }
+
+/* ══ HERO ══ */
+#hero {
+  height: 100svh; min-height: 620px;
+  position: relative; overflow: hidden;
+  background: var(--hero-bg);
+  display: flex; align-items: stretch;
+}
+.hero-glow {
+  position: absolute; inset: 0; pointer-events: none;
+  background:
+    radial-gradient(ellipse 60% 70% at 75% 40%, rgba(201,82,31,.28), transparent 55%),
+    radial-gradient(ellipse 40% 60% at 20% 60%, rgba(27,18,13,.6), transparent 60%);
+}
+/* Big background text */
+.hero-bg-text {
+  position: absolute; z-index: 1;
+  font-size: clamp(160px, 22vw, 320px);
+  font-weight: 900; letter-spacing: -.08em; line-height: 1;
+  color: rgba(255,255,255,.045);
+  top: 50%; left: 50%; transform: translate(-50%, -50%);
+  white-space: nowrap; pointer-events: none; user-select: none;
+}
+.hero-bg-text span {
+  position: absolute; left: 50%; top: 50%;
+  transform: translate(-50%, -50%);
+  opacity: 0;
+  transition: opacity .9s cubic-bezier(.22,.61,.36,1);
+}
+.hero-bg-text span.on { opacity: 1; }
+/* Halo — soft cup ring, fades before the nav */
+.hero-rings {
+  position: absolute; inset: 0; z-index: 2; pointer-events: none;
+  background: radial-gradient(circle at 50% 48%, transparent 21.5%, rgba(240,228,210,.09) 23.2%, transparent 24.8%);
+  -webkit-mask-image: linear-gradient(to bottom, transparent 10%, #000 28%, #000 82%, transparent 100%);
+  mask-image: linear-gradient(to bottom, transparent 10%, #000 28%, #000 82%, transparent 100%);
+}
+/* Drinks */
+.hero-stage { position: absolute; inset: 0; z-index: 4; pointer-events: none; }
+.drink {
+  position: absolute;
+  border-radius: 46% 46% 20% 20%;
+  box-shadow: 0 32px 72px rgba(0,0,0,.38);
+  overflow: hidden;
+}
+.drink-photo {
+  position: absolute; inset: 0;
+  background-size: cover; background-position: center;
+  opacity: 0;
+  transform: scale(1.06);
+  transition: opacity 1.05s cubic-bezier(.22,.61,.36,1), transform 1.25s cubic-bezier(.22,.61,.36,1);
+  will-change: opacity, transform;
+}
+.drink-photo.on {
+  opacity: 1;
+  transform: scale(1);
+}
+.drink::after {
+  content: ''; position: absolute; inset: 0; z-index: 2; pointer-events: none;
+  background: linear-gradient(155deg, rgba(255,255,255,.09), transparent 35%, rgba(0,0,0,.22));
+}
+.drink-c {
+  width: clamp(200px,20vw,310px); height: clamp(290px,38vw,450px);
+  left: 50%; top: 50%; transform: translate(-50%, -48%) rotate(4deg); z-index: 6;
+}
+.drink-l {
+  width: clamp(120px,12vw,185px); height: clamp(170px,24vw,270px);
+  left: calc(50% - min(22vw,295px)); top: 50%;
+  transform: translateY(-44%) rotate(-13deg); z-index: 5;
+}
+.drink-r {
+  width: clamp(120px,13vw,195px); height: clamp(175px,25vw,280px);
+  right: calc(50% - min(23vw,305px)); top: 50%;
+  transform: translateY(-44%) rotate(12deg); z-index: 5;
+}
+/* Beans */
+.bean {
+  position: absolute; z-index: 7;
+  width: 22px; height: 13px;
+  border-radius: 50%; background: #2a110a;
+  box-shadow: inset 3px 0 rgba(255,255,255,.06);
+}
+.bean::after {
+  content: ''; position: absolute;
+  left: 9px; top: 1px; width: 2px; height: 11px;
+  background: #100502; transform: rotate(18deg);
+}
+.b1 { left: 16%; top: 26%; transform: rotate(28deg); }
+.b2 { right: 14%; top: 22%; transform: rotate(-36deg); scale: .75; }
+.b3 { left: 8%;  bottom: 26%; transform: rotate(-44deg); scale: .7; }
+.b4 { right: 9%; bottom: 30%; transform: rotate(50deg); scale: .8; }
+.b5 { left: 28%; top: 13%; scale: .52; }
+.b6 { right: 29%; bottom: 11%; scale: .6; }
+/* Badge */
+.hero-badge {
+  position: absolute; z-index: 8;
+  left: calc(50% - min(18vw,240px)); bottom: 22%;
+  display: flex; align-items: center; gap: 8px;
+  background: rgba(15,9,5,.75);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(240,228,210,.14);
+  border-radius: 40px;
+  padding: 8px 14px 8px 8px;
+  color: var(--cream);
+  transform: none;
+}
+.hero-badge-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--accent); flex-shrink: 0;
+  box-shadow: 0 0 0 3px rgba(201,82,31,.25);
+  animation: pulse-dot 2s ease-in-out infinite;
+}
+@keyframes pulse-dot {
+  0%,100% { box-shadow: 0 0 0 3px rgba(201,82,31,.25); }
+  50%      { box-shadow: 0 0 0 6px rgba(201,82,31,.1); }
+}
+.hero-badge-text { font-size: 11px; font-weight: 700; line-height: 1.1; }
+.hero-badge-text small { display: block; font-size: 9px; font-weight: 400; color: rgba(240,228,210,.5); letter-spacing: .06em; }
+/* Text overlay */
+.hero-text {
+  position: absolute; z-index: 8;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  inset: 0; pointer-events: none; user-select: none;
+}
+.hero-eyebrow {
+  font-size: 10px; font-weight: 700; letter-spacing: .22em;
+  text-transform: uppercase; color: rgba(240,228,210,.55); margin-bottom: 14px;
+}
+.hero-h1 {
+  font-size: clamp(72px, 10vw, 148px);
+  font-weight: 900; letter-spacing: -.09em; line-height: .8;
+  text-align: center; white-space: nowrap; pointer-events: none;
+  text-shadow: 0 4px 0 rgba(0,0,0,.04);
+}
+.hero-h1 em {
+  display: block; font-style: italic;
+  font-family: 'Playfair Display', serif;
+  font-size: .48em; line-height: .85; letter-spacing: -.05em;
+  color: rgba(240,228,210,.6); margin: 4px 0 6px;
+}
+.hero-sub {
+  font-size: 11px; line-height: 1.55; color: rgba(240,228,210,.65);
+  max-width: 230px; text-align: center; margin-top: 16px; pointer-events: none;
+}
+/* Bottom bar */
+.hero-footer {
+  position: absolute; z-index: 20;
+  bottom: 0; left: 0; right: 0;
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 0 36px 22px;
+  pointer-events: none;
+}
+.hero-footer-info {
+  font-size: 9px; text-transform: uppercase; letter-spacing: .1em;
+  color: rgba(240,228,210,.45); line-height: 1.7;
+  pointer-events: none;
+}
+.slider-bar {
+  display: flex; align-items: center; gap: 6px;
+  position: relative; z-index: 20;
+  pointer-events: auto;
+  isolation: isolate;
+}
+/* shared button base */
+.slider-btn {
+  position: relative; overflow: hidden;
+  border: 0; border-radius: 40px;
+  font-family: inherit; font-weight: 700; font-size: 11px;
+  letter-spacing: .06em; text-transform: uppercase;
+  cursor: pointer; padding: 0; pointer-events: auto;
+  width: 48px; height: 48px;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(240,228,210,.12);
+  color: var(--cream);
+  border: 1px solid rgba(240,228,210,.18);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition: border-color .25s, background .25s;
+}
+.slider-btn:hover {
+  background: rgba(240,228,210,.22);
+  border-color: rgba(240,228,210,.4);
+}
+/* scroll-up text effect */
+.slider-btn .btn-inner {
+  position: relative; height: 1.1em; overflow: hidden;
+  display: flex; flex-direction: column; align-items: center;
+}
+.slider-btn .btn-inner span {
+  display: block; line-height: 1.1em;
+  transition: transform .3s cubic-bezier(.16,1,.3,1);
+  white-space: nowrap;
+}
+.slider-btn .btn-inner .btn-ghost-text {
+  position: absolute; top: 100%; left: 0;
+}
+.slider-btn:hover .btn-inner span:first-child { transform: translateY(-100%); }
+.slider-btn:hover .btn-inner .btn-ghost-text { transform: translateY(-100%); }
+
+/* order button — different shape */
+.order-btn {
+  border: 0; border-radius: 40px;
+  font-family: inherit; font-weight: 800; font-size: 11px;
+  letter-spacing: .08em; text-transform: uppercase;
+  cursor: pointer; pointer-events: auto;
+  background: var(--cream); color: var(--ink);
+  height: 48px; padding: 0 24px;
+  position: relative; overflow: hidden;
+  display: flex; align-items: center; justify-content: center;
+  transition: background .25s, transform .2s;
+  z-index: 20;
+}
+.order-btn:hover { background: #fff; transform: translateY(-2px); }
+/* scroll-up on order btn too */
+.order-btn .btn-inner {
+  position: relative; height: 1.1em; overflow: hidden;
+  display: flex; flex-direction: column; align-items: center;
+}
+.order-btn .btn-inner span {
+  display: block; line-height: 1.1em;
+  transition: transform .3s cubic-bezier(.16,1,.3,1);
+}
+.order-btn .btn-inner .btn-ghost-text {
+  position: absolute; top: 100%; left: 0;
+}
+.order-btn:hover .btn-inner span:first-child { transform: translateY(-100%); }
+.order-btn:hover .btn-inner .btn-ghost-text { transform: translateY(-100%); }
+.hero-scroll-hint {
+  display: flex; flex-direction: column; align-items: center; gap: 6px;
+}
+.hero-scroll-hint span { font-size: 8px; letter-spacing: .18em; text-transform: uppercase; color: rgba(240,228,210,.35); }
+.scroll-line { width: 1px; height: 36px; background: linear-gradient(to bottom, rgba(240,228,210,.3), transparent); animation: spulse 2s ease-in-out infinite; }
+@keyframes spulse { 0%,100%{opacity:.4} 50%{opacity:1} }
+
+/* ══ INFO STRIP ══ */
+.strip {
+  border-top: 1px solid var(--line); border-bottom: 1px solid var(--line);
+  overflow: hidden;
+}
+.strip-inner {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1.3fr 1fr auto;
+  height: 64px; align-items: center; gap: 24px;
+  padding: 0 40px;
+}
+.strip-item {
+  font-size: 10px; text-transform: uppercase; letter-spacing: .13em; color: #a8957f;
+  display: flex; align-items: center; gap: 8px;
+}
+.strip-item::before {
+  content: ''; display: block; width: 5px; height: 5px; border-radius: 50%; background: var(--accent); flex-shrink: 0;
+}
+.strip-cta {
+  font-size: 11px; font-weight: 800; color: var(--cream);
+  white-space: nowrap; padding-left: 20px;
+  display: flex; align-items: center; gap: 6px;
+}
+.strip-cta b { color: var(--accent); font-size: 16px; }
+
+/* ══ SECTION BASE ══ */
+.wrap { max-width: 1320px; margin: 0 auto; padding: 0 40px; }
+.sec { padding: 96px 0; }
+.sec-label { font-size: 10px; text-transform: uppercase; letter-spacing: .18em; color: var(--muted); margin-bottom: 10px; }
+.sec-h2 { font-size: clamp(42px, 5.5vw, 70px); font-weight: 900; letter-spacing: -.07em; line-height: .88; }
+
+/* ══ MENU ══ */
+#menu { background: var(--bg); }
+.menu-head { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 36px; }
+.menu-head p { font-size: 11px; line-height: 1.6; color: var(--muted); max-width: 260px; }
+.menu-grid { display: grid; grid-template-columns: 1.25fr .9fr .9fr; gap: 10px; }
+.menu-card {
+  min-height: 460px; border-radius: 10px;
+  background: #241612; overflow: hidden; position: relative;
+}
+.menu-card img {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  object-fit: cover; filter: saturate(.8) brightness(.88);
+  transition: transform .6s var(--r), filter .4s;
+}
+.menu-card:hover img { transform: scale(1.04); filter: saturate(.95) brightness(.95); }
+.menu-card::after {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(0deg, rgba(15,8,4,.92) 0%, transparent 55%);
+}
+.menu-info {
+  position: absolute; z-index: 2; bottom: 22px; left: 22px; right: 22px;
+}
+.menu-row { display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; }
+.menu-name { font-size: 22px; font-weight: 800; letter-spacing: -.04em; margin: 0; }
+.menu-price { font-size: 11px; font-weight: 700; color: var(--muted); white-space: nowrap; margin-bottom: 3px; }
+.menu-desc { font-size: 10px; color: #c4ad97; margin-top: 6px; line-height: 1.5; }
+
+/* ══ ABOUT ══ */
+#about {
+  background: var(--cream); color: var(--ink);
+  position: relative; overflow: hidden;
+}
+.about-mark {
+  position: absolute; right: -4%; top: 50%; transform: translateY(-50%);
+  font-size: clamp(120px, 18vw, 240px); font-weight: 900;
+  letter-spacing: -.1em; color: rgba(27,18,13,.06);
+  user-select: none; pointer-events: none; white-space: nowrap;
+}
+.about-grid { display: grid; grid-template-columns: 1fr 1fr; align-items: center; gap: 5vw; }
+.about-h2 { font-size: clamp(44px,6vw,80px); font-weight: 900; letter-spacing: -.08em; line-height: .84; margin: 10px 0 0; }
+.about-right { max-width: 480px; }
+.about-right p { font-size: 15px; line-height: 1.6; color: #5a4a3d; margin-bottom: 18px; }
+.about-right a {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-size: 12px; font-weight: 700;
+  color: var(--ink); border-bottom: 1px solid rgba(27,18,13,.3);
+  padding-bottom: 2px; transition: gap .25s, border-color .25s;
+}
+.about-right a:hover { gap: 14px; border-color: var(--ink); }
+.about-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 28px; }
+.about-stat {}
+.about-stat-num { font-size: 42px; font-weight: 900; letter-spacing: -.06em; line-height: 1; color: var(--ink); }
+.about-stat-label { font-size: 10px; text-transform: uppercase; letter-spacing: .1em; color: #7a6555; margin-top: 4px; }
+
+/* ══ LOCATIONS ══ */
+#locations { background: #150e09; }
+.loc-head { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 36px; }
+.loc-head p { font-size: 11px; line-height: 1.6; color: var(--muted); max-width: 240px; }
+.loc-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--line); border-radius: 10px; overflow: hidden; }
+.loc-card {
+  background: #1b1109; padding: 28px 24px;
+  transition: background .3s;
+}
+.loc-card:hover { background: rgba(201,82,31,.1); }
+.loc-num { font-size: 9px; letter-spacing: .18em; text-transform: uppercase; color: var(--accent); margin-bottom: 10px; }
+.loc-addr { font-size: 15px; font-weight: 700; color: var(--cream); line-height: 1.3; margin-bottom: 8px; }
+.loc-time { font-size: 10px; color: var(--muted); display: flex; align-items: center; gap: 6px; }
+.loc-time::before { content: ''; display: block; width: 5px; height: 5px; border-radius: 50%; background: var(--green); flex-shrink: 0; }
+.loc-more {
+  background: rgba(201,82,31,.08); border: 1px dashed rgba(201,82,31,.25);
+  display: flex; flex-direction: column; align-items: flex-start; justify-content: flex-end; padding: 28px 24px;
+}
+.loc-more-num { font-size: 9px; letter-spacing: .18em; text-transform: uppercase; color: var(--accent); margin-bottom: 10px; }
+.loc-more-n { font-size: 28px; font-weight: 900; color: var(--cream); line-height: 1; }
+.loc-more-sub { font-size: 10px; color: var(--muted); margin-top: 4px; }
+.loc-more-link {
+  margin-top: 16px; font-size: 10px; font-weight: 700;
+  color: var(--cream); border-bottom: 1px solid rgba(240,228,210,.25);
+  padding-bottom: 2px; display: inline-flex; align-items: center; gap: 6px;
+  transition: gap .25s, border-color .25s;
+}
+.loc-more-link:hover { gap: 10px; border-color: rgba(240,228,210,.6); }
+
+/* ══ GALLERY ══ */
+#gallery { background: var(--bg); padding-bottom: 0; }
+.gallery-head { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 32px; }
+.gallery-link {
+  font-size: 11px; font-weight: 700; color: var(--muted);
+  display: flex; align-items: center; gap: 6px;
+  transition: color .25s, gap .25s;
+}
+.gallery-link:hover { color: var(--cream); gap: 10px; }
+.gallery-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  grid-template-rows: 280px 200px;
+  gap: 4px;
+}
+.g-item {
+  position: relative; overflow: hidden; background: #221510;
+  cursor: pointer;
+}
+.g-item:nth-child(1) { grid-row: span 2; }
+.g-item::after {
+  content: ''; position: absolute; inset: 0;
+  background: rgba(15,8,4,0); transition: background .4s;
+}
+.g-item:hover::after { background: rgba(15,8,4,.22); }
+.g-item img {
+  width: 100%; height: 100%; object-fit: cover;
+  filter: saturate(.8);
+  transition: transform .6s var(--r), filter .4s;
+}
+.g-item:hover img { transform: scale(1.06); filter: saturate(1); }
+.g-placeholder {
+  position: absolute; inset: 0; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 8px;
+  background: linear-gradient(135deg, #2c1810, #180d07);
+}
+.g-ph-icon { font-size: 2.5rem; opacity: .25; }
+.g-ph-text { font-size: 9px; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); opacity: .4; }
+
+/* ══ SUBSCRIBE ══ */
+#subscribe { background: var(--bg); }
+.sub-grid { display: grid; grid-template-columns: 1fr 1fr; align-items: center; gap: 5vw; }
+.sub-h2 { font-size: clamp(40px, 5vw, 66px); font-weight: 900; letter-spacing: -.07em; line-height: .88; }
+.sub-right p { font-size: 14px; line-height: 1.6; color: var(--muted); margin-bottom: 22px; }
+.sub-form { display: flex; gap: 8px; }
+.sub-input {
+  flex: 1; background: rgba(240,228,210,.07); border: 1px solid var(--line);
+  border-radius: 8px; padding: 13px 16px; font-size: 13px; color: var(--cream);
+  font-family: inherit; outline: none; transition: border-color .3s;
+}
+.sub-input::placeholder { color: rgba(240,228,210,.3); }
+.sub-input:focus { border-color: rgba(240,228,210,.3); }
+.sub-btn {
+  background: var(--cream); color: var(--ink); border: 0;
+  padding: 13px 22px; border-radius: 8px;
+  font-size: 12px; font-weight: 800; white-space: nowrap;
+  transition: background .25s, transform .2s;
+}
+.sub-btn:hover { background: #e8d9c3; transform: translateY(-1px); }
+
+/* ══ FOOTER ══ */
+footer {
+  background: #110b07;
+  border-top: 1px solid var(--line);
+  padding: 40px 0 30px;
+}
+.footer-top {
+  display: flex; justify-content: space-between; align-items: center;
+  padding-bottom: 28px; border-bottom: 1px solid var(--line); margin-bottom: 22px;
+}
+.footer-logo { font-size: 20px; font-weight: 900; letter-spacing: -.05em; }
+.footer-logo em { color: var(--accent); font-style: normal; }
+.footer-socials { display: flex; gap: 20px; }
+.footer-socials a {
+  font-size: 11px; font-weight: 600; color: var(--muted);
+  transition: color .25s; display: flex; align-items: center; gap: 6px;
+}
+.footer-socials a svg { width: 15px; height: 15px; fill: currentColor; }
+.footer-socials a:hover { color: var(--cream); }
+.footer-bottom { display: flex; justify-content: space-between; align-items: center; }
+.footer-copy { font-size: 10px; color: rgba(240,228,210,.35); }
+.footer-nav { display: flex; gap: 24px; }
+.footer-nav a { font-size: 10px; color: rgba(240,228,210,.4); transition: color .25s; }
+.footer-nav a:hover { color: var(--cream); }
+
+/* ══ RESPONSIVE ══ */
+@media (max-width: 1024px) {
+  .menu-grid { grid-template-columns: 1fr 1fr; }
+  .menu-grid .menu-card:nth-child(1) { grid-column: span 2; }
+  .about-grid { grid-template-columns: 1fr; gap: 3rem; }
+  .loc-grid { grid-template-columns: 1fr 1fr; }
+  .sub-grid { grid-template-columns: 1fr; gap: 2rem; }
+  .strip-inner { grid-template-columns: 1fr 1fr auto; }
+  .strip-item:nth-child(3), .strip-item:nth-child(4) { display: none; }
+}
+@media (max-width: 960px) {
+  .nav-links a { padding: 8px 10px; font-size: 11px; }
+}
+@media (max-width: 768px) {
+  #nav { padding: 0 20px; }
+  .nav-links, .nav-cta { display: none; }
+  .nav-burger { display: flex; }
+  .wrap { padding: 0 20px; }
+  .sec { padding: 64px 0; }
+  .menu-grid { grid-template-columns: 1fr; }
+  .menu-grid .menu-card:nth-child(1) { grid-column: span 1; }
+  .menu-card { min-height: 320px; }
+  .loc-grid { grid-template-columns: 1fr; }
+  .gallery-grid {
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 200px 160px 160px;
+  }
+  .g-item:nth-child(1) { grid-column: span 2; grid-row: span 1; }
+  .hero-h1 { font-size: clamp(56px, 14vw, 100px); }
+  .drink-l, .drink-r { display: none; }
+  .slider-bar { scale: .9; }
+  .strip-inner { grid-template-columns: 1fr auto; height: auto; padding: 14px 20px; }
+  .strip-item:nth-child(2), .strip-item:nth-child(3), .strip-item:nth-child(4) { display: none; }
+  .sub-form { flex-direction: column; }
+  .footer-top { flex-direction: column; gap: 16px; text-align: center; }
+  .footer-bottom { flex-direction: column; gap: 8px; text-align: center; }
+  .footer-nav { flex-wrap: wrap; justify-content: center; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .drink-photo, .hero-bg-text span, .hero-badge-dot, .scroll-line, [data-r] {
+    animation: none !important;
+    transition: none !important;
+  }
+  body.js [data-r] { opacity: 1; transform: none; filter: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- ══ NAV ══ -->
+<nav id="nav">
+  <div class="nav-logo">COFFEE <em>BOSS</em><i></i></div>
+  <div class="nav-links">
+    <a href="#menu"><span class="roll"><span>Меню</span><span aria-hidden="true">Меню</span></span></a>
+    <a href="#about"><span class="roll"><span>Про нас</span><span aria-hidden="true">Про нас</span></span></a>
+    <a href="#locations"><span class="roll"><span>Локації</span><span aria-hidden="true">Локації</span></span></a>
+    <a href="#gallery"><span class="roll"><span>Галерея</span><span aria-hidden="true">Галерея</span></span></a>
+    <a href="#subscribe"><span class="roll"><span>Контакти</span><span aria-hidden="true">Контакти</span></span></a>
+  </div>
+  <a href="#menu" class="nav-cta"><span class="roll"><span>Замовити</span><span aria-hidden="true">Замовити</span></span></a>
+  <button class="nav-burger" id="burger" aria-label="Меню" aria-expanded="false">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- ══ HERO ══ -->
+<section id="hero">
+  <div class="hero-glow"></div>
+  <div class="hero-bg-text" id="bgText" aria-hidden="true">
+    <span class="on">КАВА</span>
+    <span></span>
+  </div>
+  <div class="hero-rings" aria-hidden="true"></div>
+  <div class="hero-stage">
+    <div class="drink drink-l" id="drinkL">
+      <div class="drink-photo on"></div>
+      <div class="drink-photo"></div>
+    </div>
+    <div class="drink drink-c" id="drinkC">
+      <div class="drink-photo on"></div>
+      <div class="drink-photo"></div>
+    </div>
+    <div class="drink drink-r" id="drinkR">
+      <div class="drink-photo on"></div>
+      <div class="drink-photo"></div>
+    </div>
+    <div class="bean b1"></div><div class="bean b2"></div>
+    <div class="bean b3"></div><div class="bean b4"></div>
+    <div class="bean b5"></div><div class="bean b6"></div>
+    <div class="hero-badge" id="heroBadge">
+      <div class="hero-badge-dot"></div>
+      <div class="hero-badge-text">
+        <span id="badgeName">Флет вайт</span>
+        <small>фаворит дня</small>
+      </div>
+    </div>
+  </div>
+  <div class="hero-text">
+    <div class="hero-eyebrow">Мережа кав'ярень — Чернігів</div>
+    <h1 class="hero-h1">
+      COFFEE
+      <em>смаком і посмішкою</em>
+      BOSS
+    </h1>
+    <p class="hero-sub">Якісна кава за доступними цінами — без вихідних, з 06:30</p>
+  </div>
+  <div class="hero-footer">
+    <div class="hero-footer-info">
+      Без вихідних<br>06:30 — 01:00
+    </div>
+    <div class="slider-bar">
+      <button type="button" class="slider-btn" id="prev" aria-label="Попередній напій">
+        <div class="btn-inner">
+          <span>←</span>
+          <span class="btn-ghost-text">←</span>
+        </div>
+      </button>
+      <a href="#menu" class="order-btn" id="orderBtn">
+        <div class="btn-inner">
+          <span>Замовити</span>
+          <span class="btn-ghost-text">Замовити</span>
+        </div>
+      </a>
+      <button type="button" class="slider-btn" id="next" aria-label="Наступний напій">
+        <div class="btn-inner">
+          <span>→</span>
+          <span class="btn-ghost-text">→</span>
+        </div>
+      </button>
+    </div>
+    <div class="hero-scroll-hint">
+      <span>Гортай</span>
+      <div class="scroll-line"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ STRIP ══ -->
+<div class="strip" data-r>
+  <div class="strip-inner">
+    <span class="strip-item">Якісна кава</span>
+    <span class="strip-item">Кава з собою</span>
+    <span class="strip-item">40+ напоїв</span>
+    <span class="strip-item">Без вихідних</span>
+    <a href="#menu" class="strip-cta">Дивитися меню <b>↗</b></a>
+  </div>
+</div>
+
+<!-- ══ MENU ══ -->
+<section class="sec" id="menu">
+  <div class="wrap">
+    <div class="menu-head" data-r>
+      <div>
+        <div class="sec-label">01 / Меню</div>
+        <h2 class="sec-h2">Обирай<br>свою каву</h2>
+      </div>
+      <p class="menu-head p">Еспресо, молочні напої та холодна кава — готуємо щодня з найкращого зерна</p>
+    </div>
+    <div class="menu-grid">
+      <article class="menu-card" data-r="scale">
+        <img src="https://images.unsplash.com/photo-1572442388796-11668a67e53d?auto=format&fit=crop&w=900&q=88" alt="Флет вайт">
+        <div class="menu-info">
+          <div class="menu-row"><h3 class="menu-name">Флет вайт</h3><span class="menu-price">від 55 ₴</span></div>
+          <p class="menu-desc">Шовковисте молоко · карамель · горіховий відтінок</p>
+        </div>
+      </article>
+      <article class="menu-card" data-r="scale">
+        <img src="https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&w=800&q=88" alt="Еспресо">
+        <div class="menu-info">
+          <div class="menu-row"><h3 class="menu-name">Еспресо</h3><span class="menu-price">від 40 ₴</span></div>
+          <p class="menu-desc">Темний шоколад · мигдаль · щільна крема</p>
+        </div>
+      </article>
+      <article class="menu-card" data-r="scale">
+        <img src="https://images.unsplash.com/photo-1461023058943-07fcbe16d735?auto=format&fit=crop&w=800&q=88" alt="Лате">
+        <div class="menu-info">
+          <div class="menu-row"><h3 class="menu-name">Лате</h3><span class="menu-price">від 60 ₴</span></div>
+          <p class="menu-desc">М'яке молоко · ваніль · ніжна піна</p>
+        </div>
+      </article>
+      <article class="menu-card" data-r="scale">
+        <img src="https://images.unsplash.com/photo-1517701604599-bb29b565090c?auto=format&fit=crop&w=800&q=88" alt="Холодна кава">
+        <div class="menu-info">
+          <div class="menu-row"><h3 class="menu-name">Колд брю</h3><span class="menu-price">від 75 ₴</span></div>
+          <p class="menu-desc">Какао · вишня · тривалий холодний настій</p>
+        </div>
+      </article>
+      <article class="menu-card" data-r="scale">
+        <img src="https://images.unsplash.com/photo-1544145945-f90425340c7e?auto=format&fit=crop&w=800&q=88" alt="Лимонад">
+        <div class="menu-info">
+          <div class="menu-row"><h3 class="menu-name">Лимонад</h3><span class="menu-price">від 55 ₴</span></div>
+          <p class="menu-desc">Свіжа м'ята · цитрус · літня прохолода</p>
+        </div>
+      </article>
+      <article class="menu-card" data-r="scale">
+        <img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&w=800&q=88" alt="Капучіно">
+        <div class="menu-info">
+          <div class="menu-row"><h3 class="menu-name">Капучіно</h3><span class="menu-price">від 55 ₴</span></div>
+          <p class="menu-desc">Класика · шовкова піна · ідеальний баланс</p>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ══ ABOUT ══ -->
+<section class="sec" id="about">
+  <div class="wrap">
+    <div class="about-grid">
+      <div data-r="left">
+        <div class="sec-label">02 / Про нас</div>
+        <h2 class="about-h2">Кава —<br>наша<br>справа</h2>
+      </div>
+      <div class="about-right" data-r="right">
+        <div class="about-stats">
+          <div class="about-stat">
+            <div class="about-stat-num">15+</div>
+            <div class="about-stat-label">Локацій у Чернігові</div>
+          </div>
+          <div class="about-stat">
+            <div class="about-stat-num">40+</div>
+            <div class="about-stat-label">Видів напоїв</div>
+          </div>
+          <div class="about-stat">
+            <div class="about-stat-num">7</div>
+            <div class="about-stat-label">Років у місті</div>
+          </div>
+          <div class="about-stat">
+            <div class="about-stat-num">18,5</div>
+            <div class="about-stat-label">Годин на день</div>
+          </div>
+        </div>
+        <p>Coffee Boss розпочав роботу в Чернігові і виріс до однієї з найбільших мереж кав'ярень у місті. Наша концепція проста — якісна кава з посмішкою за доступними цінами.</p>
+        <p>Спеціалізуємось на каві з собою: класичні еспресо-напої, чаї, фреші та авторські лимонади — все щодня, без вихідних.</p>
+        <a href="#locations">Знайти найближчу → </a>
+      </div>
+    </div>
+  </div>
+  <div class="about-mark" aria-hidden="true">BOSS</div>
+</section>
+
+<!-- ══ LOCATIONS ══ -->
+<section class="sec" id="locations">
+  <div class="wrap">
+    <div class="loc-head" data-r>
+      <div>
+        <div class="sec-label">03 / Локації</div>
+        <h2 class="sec-h2">Ми завжди<br>поруч</h2>
+      </div>
+      <p>Понад 15 точок по всьому Чернігову — від раннього ранку до пізньої ночі</p>
+    </div>
+    <div class="loc-grid" data-r>
+      <div class="loc-card">
+        <div class="loc-num">01</div>
+        <div class="loc-addr">просп. Миру, 49А</div>
+        <div class="loc-time">06:30 — 01:00</div>
+      </div>
+      <div class="loc-card">
+        <div class="loc-num">02</div>
+        <div class="loc-addr">просп. Миру, 126А</div>
+        <div class="loc-time">06:30 — 01:00</div>
+      </div>
+      <div class="loc-card">
+        <div class="loc-num">03</div>
+        <div class="loc-addr">вул. Рокосовського, 15</div>
+        <div class="loc-time">06:00 — 01:00</div>
+      </div>
+      <div class="loc-card">
+        <div class="loc-num">04</div>
+        <div class="loc-addr">вул. Шевченка, 9</div>
+        <div class="loc-time">06:30 — 01:00</div>
+      </div>
+      <div class="loc-card">
+        <div class="loc-num">05</div>
+        <div class="loc-addr">просп. Перемоги, 90/22</div>
+        <div class="loc-time">06:30 — 01:00</div>
+      </div>
+      <div class="loc-card">
+        <div class="loc-num">06</div>
+        <div class="loc-addr">вул. Мстиславська, 25</div>
+        <div class="loc-time">06:30 — 01:00</div>
+      </div>
+      <div class="loc-card">
+        <div class="loc-num">07</div>
+        <div class="loc-addr">вул. Красносільського, 71Б</div>
+        <div class="loc-time">06:30 — 01:00</div>
+      </div>
+      <div class="loc-more">
+        <div class="loc-more-num">+ ще адреси</div>
+        <div class="loc-more-n">8+</div>
+        <div class="loc-more-sub">Локацій в Instagram</div>
+        <a href="https://www.instagram.com/coffee__boss/" target="_blank" rel="noopener" class="loc-more-link">@coffee__boss →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ GALLERY ══ -->
+<section class="sec" id="gallery" style="padding-bottom:0;">
+  <div class="wrap">
+    <div class="gallery-head" data-r>
+      <div>
+        <div class="sec-label">04 / Галерея</div>
+        <h2 class="sec-h2">Атмосфера</h2>
+      </div>
+      <a href="https://www.instagram.com/coffee__boss/" target="_blank" rel="noopener" class="gallery-link">Instagram @coffee__boss →</a>
+    </div>
+  </div>
+  <div style="padding:0 40px;" data-r>
+    <div class="gallery-grid">
+      <div class="g-item">
+        <img src="https://images.unsplash.com/photo-1442512595331-e89e73853f31?auto=format&fit=crop&w=900&q=85" alt="Кав'ярня">
+      </div>
+      <div class="g-item">
+        <img src="https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=600&q=85" alt="Кава">
+      </div>
+      <div class="g-item">
+        <img src="https://images.unsplash.com/photo-1559305616-3f99cd43e353?auto=format&fit=crop&w=600&q=85" alt="Бариста">
+      </div>
+      <div class="g-item">
+        <img src="https://images.unsplash.com/photo-1470338745628-171cf53de3a8?auto=format&fit=crop&w=600&q=85" alt="Напій">
+      </div>
+      <div class="g-item">
+        <img src="https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?auto=format&fit=crop&w=600&q=85" alt="Атмосфера">
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ SUBSCRIBE ══ -->
+<section class="sec" id="subscribe">
+  <div class="wrap">
+    <div class="sub-grid">
+      <div data-r="left">
+        <div class="sec-label">05 / Будемо на зв'язку</div>
+        <h2 class="sub-h2">Нові смаки<br>та акції<br>першим</h2>
+      </div>
+      <div class="sub-right" data-r="right">
+        <p>Сезонні напої, спеціальні пропозиції та новини мережі — одразу на пошту. Без спаму.</p>
+        <form class="sub-form" onsubmit="event.preventDefault(); this.querySelector('.sub-btn').textContent='Готово ✓';">
+          <input type="email" class="sub-input" placeholder="твій email" required>
+          <button type="submit" class="sub-btn">Підписатись →</button>
+        </form>
+        <div style="margin-top:28px; display:flex; flex-direction:column; gap:10px;">
+          <div style="font-size:10px; text-transform:uppercase; letter-spacing:.1em; color:var(--muted); margin-bottom:4px;">Або пишіть напряму</div>
+          <a href="https://www.instagram.com/coffee__boss/" target="_blank" rel="noopener"
+             style="font-size:14px; font-weight:700; color:var(--cream); display:flex; align-items:center; gap:8px; border-bottom:1px solid var(--line); padding-bottom:12px;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M7.2 2h9.6A5.2 5.2 0 0 1 22 7.2v9.6a5.2 5.2 0 0 1-5.2 5.2H7.2A5.2 5.2 0 0 1 2 16.8V7.2A5.2 5.2 0 0 1 7.2 2zm0 2A3.2 3.2 0 0 0 4 7.2v9.6A3.2 3.2 0 0 0 7.2 20h9.6a3.2 3.2 0 0 0 3.2-3.2V7.2A3.2 3.2 0 0 0 16.8 4H7.2zm9.9 1.5a1.2 1.2 0 1 1 0 2.4 1.2 1.2 0 0 1 0-2.4zM12 7a5 5 0 1 1 0 10 5 5 0 0 1 0-10zm0 2a3 3 0 1 0 0 6 3 3 0 0 0 0-6z"/></svg>
+            @coffee__boss
+          </a>
+          <a href="https://www.facebook.com/CoffeeBossChe/" target="_blank" rel="noopener"
+             style="font-size:14px; font-weight:700; color:var(--cream); display:flex; align-items:center; gap:8px;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+            Coffee Boss Chernihiv
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ FOOTER ══ -->
+<footer>
+  <div class="wrap">
+    <div class="footer-top">
+      <div class="footer-logo">COFFEE <em>BOSS</em></div>
+      <div class="footer-socials">
+        <a href="https://www.instagram.com/coffee__boss/" target="_blank" rel="noopener" aria-label="Instagram">
+          <svg viewBox="0 0 24 24"><path d="M7.2 2h9.6A5.2 5.2 0 0 1 22 7.2v9.6a5.2 5.2 0 0 1-5.2 5.2H7.2A5.2 5.2 0 0 1 2 16.8V7.2A5.2 5.2 0 0 1 7.2 2zm0 2A3.2 3.2 0 0 0 4 7.2v9.6A3.2 3.2 0 0 0 7.2 20h9.6a3.2 3.2 0 0 0 3.2-3.2V7.2A3.2 3.2 0 0 0 16.8 4H7.2zm9.9 1.5a1.2 1.2 0 1 1 0 2.4 1.2 1.2 0 0 1 0-2.4zM12 7a5 5 0 1 1 0 10 5 5 0 0 1 0-10zm0 2a3 3 0 1 0 0 6 3 3 0 0 0 0-6z"/></svg>
+          Instagram
+        </a>
+        <a href="https://www.facebook.com/CoffeeBossChe/" target="_blank" rel="noopener" aria-label="Facebook">
+          <svg viewBox="0 0 24 24"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+          Facebook
+        </a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span class="footer-copy">© 2024 Coffee Boss · Чернігів · Кава · Люди · Місто</span>
+      <nav class="footer-nav">
+        <a href="#menu">Меню</a>
+        <a href="#about">Про нас</a>
+        <a href="#locations">Локації</a>
+        <a href="#gallery">Галерея</a>
+      </nav>
+    </div>
+  </div>
+</footer>
+
+<script>
+/* ── Reveal ── */
+document.body.classList.add('js');
+const ro = new IntersectionObserver((entries, obs) => {
+  entries.forEach(e => {
+    if (!e.isIntersecting) return;
+    e.target.classList.add('on');
+    obs.unobserve(e.target);
+  });
+}, { threshold: 0.1, rootMargin: '0px 0px -6% 0px' });
+document.querySelectorAll('[data-r]').forEach((el, i) => {
+  el.style.transitionDelay = Math.min(i * 40, 400) + 'ms';
+  ro.observe(el);
+});
+
+/* ── Nav scroll ── */
+const nav = document.getElementById('nav');
+window.addEventListener('scroll', () => {
+  nav.classList.toggle('bg', window.scrollY > 60);
+}, { passive: true });
+
+/* ── Burger ── */
+const burger = document.getElementById('burger');
+const navLinks = document.querySelector('.nav-links');
+burger.addEventListener('click', () => {
+  const open = navLinks.style.display === 'flex';
+  burger.setAttribute('aria-expanded', !open);
+  if (open) {
+    navLinks.style.display = 'none';
+  } else {
+    Object.assign(navLinks.style, {
+      display: 'flex', flexDirection: 'column',
+      position: 'fixed', top: '72px', left: '0', right: '0',
+      background: 'rgba(17,11,7,.97)', backdropFilter: 'blur(18px)',
+      padding: '24px', gap: '4px', zIndex: '48'
+    });
+  }
+});
+navLinks.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
+  if (window.matchMedia('(max-width: 768px)').matches) {
+    navLinks.style.display = 'none';
+    burger.setAttribute('aria-expanded', 'false');
+  }
+}));
+
+/* ── Nav text roll ── */
+document.querySelectorAll('#nav .nav-links a, #nav .nav-cta').forEach(el => {
+  el.addEventListener('mouseenter', () => el.classList.add('is-on'));
+  el.addEventListener('mouseleave', () => el.classList.remove('is-on'));
+});
+const drinks = [
+  {
+    c: 'https://images.unsplash.com/photo-1572442388796-11668a67e53d?auto=format&fit=crop&w=700&q=88',
+    l: 'https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&w=600&q=85',
+    r: 'https://images.unsplash.com/photo-1570968915860-54d5c301fa9c?auto=format&fit=crop&w=600&q=85',
+    name: 'Флет вайт', bg: 'КАВА'
+  },
+  {
+    c: 'https://images.unsplash.com/photo-1461023058943-07fcbe16d735?auto=format&fit=crop&w=700&q=88',
+    l: 'https://images.unsplash.com/photo-1510591509098-f4fdc6d0ff04?auto=format&fit=crop&w=600&q=85',
+    r: 'https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?auto=format&fit=crop&w=600&q=85',
+    name: 'Лате', bg: 'ЛАТЕ'
+  },
+  {
+    c: 'https://images.unsplash.com/photo-1461988091159-192b6df7054f?auto=format&fit=crop&w=700&q=88',
+    l: 'https://images.unsplash.com/photo-1447933601403-0c6688de566e?auto=format&fit=crop&w=600&q=85',
+    r: 'https://images.unsplash.com/photo-1498804103079-a6351b050096?auto=format&fit=crop&w=600&q=85',
+    name: 'Колд брю', bg: 'COLD'
+  },
+  {
+    c: 'https://images.unsplash.com/photo-1517701604599-bb29b565090c?auto=format&fit=crop&w=700&q=88',
+    l: 'https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&w=600&q=85',
+    r: 'https://images.unsplash.com/photo-1461023058943-07fcbe16d735?auto=format&fit=crop&w=600&q=85',
+    name: 'Еспресо', bg: 'BOSS'
+  }
+];
+
+let idx = 0;
+let busy = false;
+const dc = document.getElementById('drinkC');
+const dl = document.getElementById('drinkL');
+const dr = document.getElementById('drinkR');
+const bgLayers = [...document.querySelectorAll('#bgText span')];
+const badgeName = document.getElementById('badgeName');
+const layers = {
+  c: [...dc.querySelectorAll('.drink-photo')],
+  l: [...dl.querySelectorAll('.drink-photo')],
+  r: [...dr.querySelectorAll('.drink-photo')]
+};
+let front = 0;
+
+drinks.forEach(d => { [d.c, d.l, d.r].forEach(src => { const i = new Image(); i.src = src; }); });
+
+let bgFront = 0;
+
+function paint(slot, i, src, instant) {
+  const el = layers[slot][i];
+  if (instant) el.style.transition = 'none';
+  el.style.backgroundImage = `url("${src}")`;
+  if (instant) {
+    el.offsetHeight;
+    el.style.transition = '';
+  }
+}
+
+function setDrink(i, { instant = false } = {}) {
+  const d = drinks[i];
+  badgeName.textContent = d.name;
+
+  if (instant) {
+    paint('c', 0, d.c, true);
+    paint('l', 0, d.l, true);
+    paint('r', 0, d.r, true);
+    ['c', 'l', 'r'].forEach(slot => {
+      layers[slot][0].classList.add('on');
+      layers[slot][1].classList.remove('on');
+    });
+    bgLayers[0].textContent = d.bg;
+    bgLayers[0].classList.add('on');
+    bgLayers[1].classList.remove('on');
+    front = 0;
+    bgFront = 0;
+    return;
+  }
+
+  if (busy) return;
+  busy = true;
+
+  const next = 1 - front;
+  const nextBg = 1 - bgFront;
+  paint('c', next, d.c, false);
+  paint('l', next, d.l, false);
+  paint('r', next, d.r, false);
+
+  ['c', 'l', 'r'].forEach(slot => {
+    layers[slot][next].classList.add('on');
+    layers[slot][front].classList.remove('on');
+  });
+  front = next;
+
+  bgLayers[nextBg].textContent = d.bg;
+  bgLayers[nextBg].classList.add('on');
+  bgLayers[bgFront].classList.remove('on');
+  bgFront = nextBg;
+
+  setTimeout(() => { busy = false; }, 800);
+}
+
+function go(dir) {
+  if (busy) return;
+  idx = (idx + dir + drinks.length) % drinks.length;
+  setDrink(idx);
+  restartAuto();
+}
+
+setDrink(0, { instant: true });
+
+document.getElementById('prev').addEventListener('click', () => go(-1));
+document.getElementById('next').addEventListener('click', () => go(1));
+
+let autoTimer;
+function restartAuto() {
+  clearInterval(autoTimer);
+  autoTimer = setInterval(() => {
+    if (busy) return;
+    idx = (idx + 1) % drinks.length;
+    setDrink(idx);
+  }, 5600);
+}
+restartAuto();
+
+const sliderBar = document.querySelector('.slider-bar');
+sliderBar.addEventListener('mouseenter', () => clearInterval(autoTimer));
+sliderBar.addEventListener('mouseleave', restartAuto);
+</script>
+</body>
+</html>
