@@ -216,23 +216,24 @@ body.js [data-r].on { opacity:1; transform:none; filter:blur(0); }
   transform: translateY(-44%) rotate(12deg); z-index: 5;
 }
 /* Beans */
+.beans { position: absolute; inset: 0; z-index: 7; pointer-events: none; overflow: hidden; }
 .bean {
-  position: absolute; z-index: 7;
+  position: absolute;
+  left: 50%; top: 48%;
   width: 22px; height: 13px;
-  border-radius: 50%; background: #2a110a;
-  box-shadow: inset 3px 0 rgba(255,255,255,.06);
+  border-radius: 50%;
+  background: var(--bean, #2a110a);
+  box-shadow: inset 3px 0 rgba(255,255,255,.07), 0 4px 8px rgba(0,0,0,.25);
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(0.12);
+  will-change: transform, opacity, left, top;
 }
 .bean::after {
   content: ''; position: absolute;
   left: 9px; top: 1px; width: 2px; height: 11px;
   background: #100502; transform: rotate(18deg);
+  border-radius: 1px;
 }
-.b1 { left: 16%; top: 26%; transform: rotate(28deg); }
-.b2 { right: 14%; top: 22%; transform: rotate(-36deg); scale: .75; }
-.b3 { left: 8%;  bottom: 26%; transform: rotate(-44deg); scale: .7; }
-.b4 { right: 9%; bottom: 30%; transform: rotate(50deg); scale: .8; }
-.b5 { left: 28%; top: 13%; scale: .52; }
-.b6 { right: 29%; bottom: 11%; scale: .6; }
 /* Badge */
 .hero-badge {
   position: absolute; z-index: 8;
@@ -660,9 +661,16 @@ footer {
       <div class="drink-photo on"></div>
       <div class="drink-photo"></div>
     </div>
-    <div class="bean b1"></div><div class="bean b2"></div>
-    <div class="bean b3"></div><div class="bean b4"></div>
-    <div class="bean b5"></div><div class="bean b6"></div>
+    <div class="beans" aria-hidden="true">
+      <div class="bean" style="--x:16%; --y:26%; --r:28; --s:.9; --bean:#2a110a"></div>
+      <div class="bean" style="--x:84%; --y:22%; --r:-36; --s:.75; --bean:#3b160c"></div>
+      <div class="bean" style="--x:8%; --y:70%; --r:-44; --s:.7; --bean:#1c0c08"></div>
+      <div class="bean" style="--x:88%; --y:66%; --r:50; --s:.8; --bean:#2e130b"></div>
+      <div class="bean" style="--x:28%; --y:13%; --r:12; --s:.52; --bean:#24100a"></div>
+      <div class="bean" style="--x:70%; --y:86%; --r:-20; --s:.6; --bean:#3a170d"></div>
+      <div class="bean" style="--x:10%; --y:42%; --r:40; --s:.58; --bean:#271109"></div>
+      <div class="bean" style="--x:90%; --y:40%; --r:-55; --s:.55; --bean:#32150c"></div>
+    </div>
     <div class="hero-badge" id="heroBadge">
       <div class="hero-badge-dot"></div>
       <div class="hero-badge-text">
@@ -1008,7 +1016,53 @@ navLinks.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
   }
 }));
 
-/* ── Nav text roll ── */
+/* ── Beans burst from cup ── */
+function burstBeans() {
+  const beans = [...document.querySelectorAll('.bean')];
+  beans.forEach((el, i) => {
+    const x = el.style.getPropertyValue('--x').trim() || '50%';
+    const y = el.style.getPropertyValue('--y').trim() || '50%';
+    const r = parseFloat(el.style.getPropertyValue('--r')) || 0;
+    const s = parseFloat(el.style.getPropertyValue('--s')) || 1;
+    const dir = i % 2 ? 1 : -1;
+    const spin = dir * (220 + i * 35);
+
+    el.animate([
+      {
+        left: '50%',
+        top: '48%',
+        opacity: 0,
+        transform: 'translate(-50%, -50%) rotate(0deg) scale(0.12)'
+      },
+      {
+        left: '50%',
+        top: '42%',
+        opacity: 1,
+        transform: `translate(-50%, -50%) rotate(${spin * 0.35}deg) scale(${s * 0.85})`,
+        offset: 0.18
+      },
+      {
+        left: x,
+        top: y,
+        opacity: 1,
+        transform: `translate(-50%, -50%) rotate(${spin}deg) scale(${s * 1.12})`,
+        offset: 0.62
+      },
+      {
+        left: x,
+        top: y,
+        opacity: 1,
+        transform: `translate(-50%, -50%) rotate(${r}deg) scale(${s})`
+      }
+    ], {
+      duration: 1700 + i * 90,
+      delay: 150 + i * 85,
+      easing: 'cubic-bezier(.22, .68, .18, 1)',
+      fill: 'forwards'
+    });
+  });
+}
+requestAnimationFrame(() => requestAnimationFrame(burstBeans));
 document.querySelectorAll('#nav .nav-links a, #nav .nav-cta').forEach(el => {
   el.addEventListener('mouseenter', () => el.classList.add('is-on'));
   el.addEventListener('mouseleave', () => el.classList.remove('is-on'));
